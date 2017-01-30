@@ -1,0 +1,157 @@
+﻿@model MvcPL.Models.UserAlbumModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <title></title>
+ @Styles.Render("~/Content/css");
+    <style>
+        #albums {
+            padding-left: 50px;
+        }
+
+        #wrapper {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        .name {
+            align-content: center;
+        }
+
+        TABLE {
+            table-layout: fixed; /* Ячейки фиксированной ширины */
+        }
+
+        .td {
+            vertical-align: middle;
+        }
+
+        .white {
+            color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div id="modDialog" class="modal fade">
+        <div id="dialogContent" class="modal-dialog"></div>
+    </div>
+    <div id="wrapper">
+        <div class="navbar-content">
+            <div class="row">
+                <div class="col-md-3" style="text-align: center">
+                    <img src="@Model.User.AccountImage" alt="" height="250" style="background-size: contain; max-width: 250px;">
+                    @if (User.Identity.Name == Model.User.Email)
+                    {
+                        <p class="text-center ">
+                            @Html.ActionLink("Change Photo", "Upload", "UserAccount", new { id = Model.User.UserId }, new { @class = "changePhoto" })
+                        </p>
+                    }
+                </div>
+                <div class="col-md-13">
+                    <span class="h3 white">@Model.User.UserName</span>
+                    <p class="text-muted">
+                        @Model.User.FirstName @Model.User.LastName
+                    </p>
+                    <p class="text-muted">
+                        @Model.User.Email
+                    </p>
+                    <p class="h3 white">@Model.User.PersonalInformation</p>
+                    <div class="divider">
+                    </div>
+                    @if (User.Identity.Name == Model.User.Email)
+                    {
+                        @Html.ActionLink("Edit profile", "EditProfile", "UserAccount",
+                            new { id = Model.User.UserId }, new { @class = "editProfile" })
+                    }
+                </div>
+            </div>
+            <div id="albums">
+                @if (User.Identity.Name == Model.User.Email)
+                {
+                    <h3 class="white">Your albums</h3>
+                }
+                else { <h3 class="white">Albums</h3> }
+
+                <table>
+                    @if (Model.Album != null)
+                    {
+                        <tr>
+                            @foreach (var album in Model.Album)
+                            {
+                                <td>
+                                    <table>
+                                        <tr><td align="center" width="150" height="50">@Html.ActionLink(album.Name, "AlbumView", "UserAccount", new {id = album.AlbumId}, new {@class = "AlbumName"})</td></tr>
+                                        <tr>
+                                            <td width="150">
+                                                <a href=@Url.Action("AlbumView", new {id = album.AlbumId})>
+                                                    <img src=@album.AlbumImage alt="" width="150px" height="150px"/>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            }
+                            @if (User.Identity.Name == Model.User.Email)
+                            {
+                                <td style="padding-top: 45px">
+                                    <div id="CreateAlbum">
+                                        <a href="@Url.Action("CreateAlbum", "UserAccount", new {id = Model.User.UserId})" class="create">
+                                            <img src="@Url.Content("~/Content/Images/add-circle-blue-128.png")" class="img-rounded" width="100px" height="100px" title="Create album"/>
+                                        </a>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".editProfile").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".changePhoto").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+<script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".create").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+</script>
+}

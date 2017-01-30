@@ -1,0 +1,191 @@
+﻿@model MvcPL.Models.AlbumPhotoModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    @Styles.Render("~/Content/Site.css")
+
+    <style>
+        .crop {
+            float: left;
+            margin: .5em 10px .5em 0;
+            overflow: hidden; /* this is important */
+            position: relative; /* this is important too */
+            border: 1px solid #ccc;
+            width: 280px;
+            height: 200px;
+        }
+
+            .crop img {
+                position: absolute;
+                top: -40px;
+                left: -50px;
+                max-width: 150%;
+            }
+
+        #wrapper {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        #addPhoto {
+            padding-left: 50px;
+        }
+
+        #myGallery img {
+            display: block;
+            margin: 20px;
+            border: 5px ridge white;
+        }
+
+        .ContextItem {
+            background-color: White;
+            color: Black;
+            font-weight: normal;
+            border: black;
+        }
+
+            .ContextItem:hover {
+                background-color: #4169e1;
+                color: White;
+                font-weight: bold;
+            }
+
+        a.likePhoto {
+            background: url(../../Content/Images/like.jpg);
+            position: absolute;
+            left: 270px;
+            top: 190px;
+        }
+    </style>
+    <script type="text/javascript" src="~/GallaryScripts/fancyapps-fancyBox-c00852a/lib/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="~/GallaryScripts/fancyapps-fancyBox-c00852a/lib/jquery.mousewheel.pack.js"></script>
+    <link href="~/GallaryScripts/fancyapps-fancyBox-c00852a/source/jquery.fancybox.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/GallaryScripts/fancyapps-fancyBox-c00852a/source/jquery.fancybox.pack.js"></script>
+    <script type="text/javascript">
+        $(".fancybox").fancybox({
+            type: "image"
+        });</script>
+
+</head>
+
+<body oncontextmenu="return false">
+    <div id="wrapper">
+        <div id="addPhoto">
+            <h2>@Model.Album.Name</h2>
+            <div id="modDialog" class="modal fade">
+                <div id="dialogContent" class="modal-dialog"></div>
+            </div>
+            @Html.ActionLink("Add photo", "AddPhoto", "UserAccount",
+            new { id = Model.Album.AlbumId }, new { @class = "addPhoto" })
+        </div>
+        <div class="row">
+            <div id="myGallery">
+                @if (Model.Photos != null)
+            {
+                foreach (var photo in Model.Photos)
+                {
+                    <div onmousedown="HideMenu('contextMenu');"
+                         onmouseup="HideMenu('contextMenu');"
+                         oncontextmenu="ShowMenu('contextMenu',event);"
+                         class="detailItem">
+                        
+                        <div class="col-md-3 col-sm-3 col-xs-6 col-lg-3">
+                           <div class="form-group">
+                               <div id="likes" style="position: relative">
+                                   <a href=@photo.Path data-fancybox-group="group" class="fancybox" rel="gallery">
+                                       <img class="img-fluid crop" src=@photo.Path alt="" />
+                                   </a>
+                                   @using (Ajax.BeginForm("Rating", "UserAccount", new { id = photo.PhotoId },
+                     new AjaxOptions
+                     {
+                         HttpMethod = "Post",
+                         InsertionMode = InsertionMode.Replace,
+                         UpdateTargetId = "likecount"
+                     }))
+                                   {
+
+                                       <button type="submit" id="like" value="Like" class="btn btn-primary btn-xs"> Like &nbsp; <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> </button>
+                                   }
+                                   <input type="text" id="likes" name="likes" value='@ViewBag.noLikes' readonly="readonly" style="border: none; background-color: transparent; width: 20px" /><span style="color: black">likes</span>
+
+                               </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div style="display:none; " id="contextMenu">
+        <table border="0" cellpadding="0" cellspacing="0"
+               style="border: thin solid #808080; cursor: default;" width="100px"
+               bgcolor="White">
+            <tr>
+                <td>
+                    @Html.ActionLink("Make album picture", "AddPhoto", "UserAccount",
+            new { id = Model.Album.AlbumId }, new { @class = "btn ContextItem" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="ContextItem">Delete</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".addPhoto").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+    <script language="javascript" type="text/javascript">
+
+        function ShowMenu(control, e) {
+            var posx = e.clientX + window.pageXOffset + 'px'; //Left Position of Mouse Pointer
+            var posy = e.clientY + window.pageYOffset + 'px'; //Top Position of Mouse Pointer
+            document.getElementById(control).style.position = 'absolute';
+            document.getElementById(control).style.display = 'inline';
+            document.getElementById(control).style.left = posx;
+            document.getElementById(control).style.top = posy;
+        }
+        function HideMenu(control) {
+
+            document.getElementById(control).style.display = 'none';
+        }
+
+    </script>
+    <script type="text/javascript">
+    $("#like").click(function () {
+        $.ajax({
+            type: "POST",
+            url: "Controller/LikeAction",
+            data: { /* Your Data */ },
+            success: function (result) {
+                alert("error = " + error);
+
+            // Hide Like Button & Show Dislike Button
+        },
+        error: function (error) {
+            alert("error = " + error);
+        }
+    });
+        });
+    </script>
+}

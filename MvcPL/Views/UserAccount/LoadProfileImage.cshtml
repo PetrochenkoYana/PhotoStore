@@ -1,0 +1,36 @@
+﻿@model MvcPL.Models.UserViewModel
+@{
+    ViewBag.Title = "Upload";
+}
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddPhoto</title>
+    <script type="text/javascript" src="~/Scripts/bootstrap-filestyle.min.js"> </script>
+    @section scripts
+    {
+        <script type="text/javascript">
+            $(":file").filestyle();
+        </script>
+
+    }
+
+</head>
+<body>
+    <div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+                <h3>Choose file for loading</h3>
+            </div>
+            <div class="modal-body">
+
+                @using (Html.BeginForm("Upload", "UserAccount", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                    <input type="hidden" name="id" value="@Model.UserId" />
+                    <input type="file" name="upload" class="filestyle" data-classButton="btn btn-primary" data-input="false" data-classIcon="icon-plus" data-buttonText="Choose file" /><br>
+                    <input type="submit" value="Load" />
+                }
+            </div>
+        </div>
+    </div>
+</body>

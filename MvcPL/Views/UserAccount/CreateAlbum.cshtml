@@ -1,0 +1,40 @@
+﻿@model MvcPL.Models.UserViewModel
+@{
+    ViewBag.Title = "Upload";
+}
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>CreateAlbum</title>
+    <script type="text/javascript" src="~/Scripts/bootstrap-filestyle.min.js"> </script>
+    @section scripts
+    {
+        <script type="text/javascript">
+            $(":file").filestyle();
+        </script>
+
+    }
+    @Styles.Render("~/Content/css");
+
+</head>
+<body>
+    <div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+                <h3>Create new album</h3>
+            </div>
+            <div class="modal-body">
+
+                @using (Html.BeginForm("CreateAlbum", "UserAccount", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                    <input type="hidden" name="UserId" value="@Model.UserId" />
+                    <label >Enter name of new album</label>
+                <input type="text" name="Name" placeholder="Album name" /><br>
+                <p> </p>
+                <p> </p>
+                    <input type="submit" value="Create" />
+                }
+            </div>
+        </div>
+    </div>
+</body>
