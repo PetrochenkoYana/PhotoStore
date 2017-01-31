@@ -63,7 +63,7 @@ namespace MvcPL.Controllers
                 if (membershipUser != null)
                 {
                     FormsAuthentication.SetAuthCookie(registerViewModel.Email, false);
-                    return RedirectToAction("Login", "Home");
+                    return RedirectToAction("UserPage", "UserAccount");
                 }
                 else
                 {

@@ -84,6 +84,8 @@ namespace MvcPL.Models
         public AlbumViewModel Album { get; set; }
 
         public DateTime LoadDateTime { get; set; }
+
+        public int LikesAmount { get; set; }
     }
 
     public class UserAlbumModel

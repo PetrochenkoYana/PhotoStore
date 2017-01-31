@@ -32,12 +32,12 @@ namespace MvcPL.Infrastructure.Mappers
         {
             return new PhotoViewModel()
             {
-                PhotoId = photoEntity.AlbumId,
-                AlbumId = photoEntity.Id,
+                PhotoId = photoEntity.Id,
+                AlbumId = photoEntity.AlbumId,
                 Name = photoEntity.Name,
                 LoadDateTime = photoEntity.LoadDateTime,
-                Path = photoEntity.Path
-
+                Path = photoEntity.Path,
+                LikesAmount = photoEntity.LikesAmount,
             };
 
         }

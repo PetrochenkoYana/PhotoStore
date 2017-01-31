@@ -4,6 +4,7 @@ using BLL.Interfacies.Entities;
 using BLL.Interfacies.Services;
 using DAL.Interfacies.Repository;
 using BLL.Mappers;
+using System.Linq;
 
 namespace BLL.Services
 {
@@ -11,11 +12,13 @@ namespace BLL.Services
     {
         private readonly IUnitOfWork uow;
         private readonly IPhotoRepository photoRepository;
+        private readonly ILikeRepository likeRepo;
 
-        public PhotoService(IUnitOfWork uow, IPhotoRepository repository)
+        public PhotoService(IUnitOfWork uow, IPhotoRepository repository, ILikeRepository likeRepo)
         {
             this.uow = uow;
             this.photoRepository = repository;
+            this.likeRepo = likeRepo;
         }
         public void CreatePhoto(PhotoEntity photo)
         {
@@ -30,7 +33,14 @@ namespace BLL.Services
 
         public IEnumerable<PhotoEntity> GetByAlbumId(int albumId)
         {
-            return photoRepository.GetByAlbumId(albumId).ToBll();
+            var album = photoRepository.GetByAlbumId(albumId).ToBll().ToList();
+            foreach (var photo in album)
+            {
+                var likes = likeRepo.GetAll().Count(l => l.PhotoId == photo.Id);
+                photo.LikesAmount = likes;
+            }
+
+            return album;
         }
 
         public PhotoEntity GetPhotoEntity(int id)

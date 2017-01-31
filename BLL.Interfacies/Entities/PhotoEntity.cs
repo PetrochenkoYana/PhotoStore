@@ -15,6 +15,6 @@ namespace BLL.Interfacies.Entities
 
         public DateTime LoadDateTime { get; set; }
 
-        public IEnumerable<LikeEntity> Likes { get; set; }
+        public int LikesAmount { get; set; }
     }
 }

@@ -97,18 +97,14 @@
                                    <a href=@photo.Path data-fancybox-group="group" class="fancybox" rel="gallery">
                                        <img class="img-fluid crop" src=@photo.Path alt="" />
                                    </a>
-                                   @using (Ajax.BeginForm("Rating", "UserAccount", new { id = photo.PhotoId },
-                     new AjaxOptions
-                     {
-                         HttpMethod = "Post",
-                         InsertionMode = InsertionMode.Replace,
-                         UpdateTargetId = "likecount"
-                     }))
-                                   {
 
-                                       <button type="submit" id="like" value="Like" class="btn btn-primary btn-xs"> Like &nbsp; <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> </button>
+                                   @{
+                                       var btnLikeId = "btnLike" + photo.PhotoId;
+                                       var likesId = "like"+ photo.PhotoId;
                                    }
-                                   <input type="text" id="likes" name="likes" value='@ViewBag.noLikes' readonly="readonly" style="border: none; background-color: transparent; width: 20px" /><span style="color: black">likes</span>
+
+                                   <button type="submit" id="@btnLikeId" value="Like" class="btn btn-primary btn-xs btnLike"> Like &nbsp; <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> </button>
+                                   <input type="text" id="@likesId" name="likes" value="@photo.LikesAmount" readonly="readonly" style="border: none; color: white; background-color: transparent; width: 20px" />
 
                                </div>
 
@@ -172,15 +168,23 @@
 
     </script>
     <script type="text/javascript">
-    $("#like").click(function () {
+        $(".btnLike").click(function () {
+            var id = this.id.replace("btnLike", "");
+            var likesAmount = $("#like" + id);
+
         $.ajax({
             type: "POST",
-            url: "Controller/LikeAction",
-            data: { /* Your Data */ },
+            url: "/UserAccount/Rating",
+            data: { id : id },
             success: function (result) {
-                alert("error = " + error);
+                var val = likesAmount.val();
+                if (result) {
+                    val++;
+                }
+                else
+                    val--;
 
-            // Hide Like Button & Show Dislike Button
+                likesAmount.val(val);
         },
         error: function (error) {
             alert("error = " + error);

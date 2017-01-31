@@ -144,22 +144,12 @@ namespace MvcPL.Controllers
         {
             return View("UserPage");
         }
-        //[HttpGet]
-        //public ActionResult Rating(int id)
-        //{
-        //    List<LikeEntity> likes = likeservice.GetAllLikeEntities().Where(v => v.PhotoId == id).ToList();
-        //    int nooflikes = likes.Count;
-        //    ViewBag.noLikes = nooflikes;
-        //    return Json(ViewBag.noLikes, JsonRequestBehavior.AllowGet);
-        //}
 
         [HttpPost]
-        public void Rating(int id)
+        [Authorize]
+        public ActionResult Rating(int id)
         {
-            if (ModelState.IsValid && User.Identity.IsAuthenticated == true)
-            {
                 var like = new LikeViewModel() {PhotoId = id, UserId = this.GetUserId()};
-                
 
                 var userLike =
                     likeservice.GetAllLikeEntities()
@@ -168,19 +158,15 @@ namespace MvcPL.Controllers
                 if (userLike.Count() == 0)
                 {
                     likeservice.CreateLike(like.ToBllLike());
+                return new JsonResult { Data = true };
                 }
-                else if(userLike.Count()==1)
+                else
                 {
                     var likeDelete =
                         likeservice.GetAllLikeEntities()
                             .FirstOrDefault(l => l.UserId == like.UserId && l.PhotoId == like.PhotoId);
                     likeservice.DeleteLike(likeDelete);
-
-                }
-            }
-            else
-            {
-
+                return new JsonResult { Data = false };
             }
         }
     }
